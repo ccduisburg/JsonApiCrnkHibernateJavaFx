@@ -1,9 +1,6 @@
 package com.codenotfound.crnk.client;
 
-import com.codenotfound.crnk.domain.model.Address;
-import com.codenotfound.crnk.domain.model.Book;
-import com.codenotfound.crnk.domain.model.BookCategory;
-import com.codenotfound.crnk.domain.model.Library;
+import com.codenotfound.crnk.domain.model.*;
 
 import java.util.List;
 
@@ -30,5 +27,9 @@ public class Tester {
         libraries.forEach(l-> {
             System.out.println(client.findLibraryAddress(l.getId()));
         });
+
+        System.out.println("\n<<BookPersonAddressLibrary>>");
+        List<BookPersonAddressLibrary> bookPersonAddressLibraries = client.findBookPersonAddressLibrary();
+        bookPersonAddressLibraries.forEach(s-> System.out.println(s.toString()));
     }
 }

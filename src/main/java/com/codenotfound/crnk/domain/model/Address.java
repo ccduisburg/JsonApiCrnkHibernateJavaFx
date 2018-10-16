@@ -44,6 +44,16 @@ public class Address implements Serializable {
     @JsonApiRelation(opposite = "address")
     private Person person;
 
+    public Address(String location, Integer hnummer, String PLZ, String stadt) {
+        this.location = location;
+        this.hnummer = hnummer;
+        this.PLZ = PLZ;
+        this.stadt = stadt;
+    }
+
+    public Address() {
+    }
+
     public String toString() {
         return String.format("Address(%d,%s,%d,%s,%s)", id, location, hnummer, PLZ, stadt);
     }

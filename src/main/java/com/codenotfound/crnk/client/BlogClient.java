@@ -13,6 +13,7 @@ import io.crnk.client.CrnkClient;
 import io.crnk.core.queryspec.QuerySpec;
 import io.crnk.core.repository.ResourceRepositoryV2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -33,6 +34,9 @@ public class BlogClient {
 
 
   private RelationshipRepositoryV2<Library,Long, Address,Long> libraryLongAddressLongRelationshipRepositoryV2;
+  private RelationshipRepositoryV2<Book, Long, Library, Long> bookLongLibraryLongRelationshipRepositoryV2;
+  private RelationshipRepositoryV2<Book, Long, Person, Long> bookLongPersonLongRelationshipRepositoryV2;
+  private RelationshipRepositoryV2<Person, Long, Address, Long> personLongAddressLongRelationshipRepositoryV2;
 
   @PostConstruct
   public void init() {
@@ -43,8 +47,9 @@ public class BlogClient {
     bookCategoryLongResourceRepositoryV2 = crnkClient.getRepositoryForType(BookCategory.class);
     libraryLongResourceRepositoryV2 = crnkClient.getRepositoryForType(Library.class);
     libraryLongAddressLongRelationshipRepositoryV2 = crnkClient.getRepositoryForType(Library.class,Address.class);
-
-
+    bookLongLibraryLongRelationshipRepositoryV2 = crnkClient.getRepositoryForType(Book.class, Library.class);
+    bookLongPersonLongRelationshipRepositoryV2 = crnkClient.getRepositoryForType(Book.class, Person.class);
+    personLongAddressLongRelationshipRepositoryV2 = crnkClient.getRepositoryForType(Person.class, Address.class);
   }
 
   public Article findOneArticle(long id) {
@@ -91,6 +96,23 @@ public class BlogClient {
     return personResourceRepositoryV2.findAll(new QuerySpec(Person.class));
   }
 
+
+  public List<BookPersonAddressLibrary> findBookPersonAddressLibrary() {
+    List<BookPersonAddressLibrary> ret = new ArrayList<>();
+    List<Book> books = bookLongResourceRepositoryV2.findAll(new QuerySpec(Book.class));
+    books.forEach(book -> {
+//      Person firstPerson = book.getPeople().get(0);
+      Person firstPerson = bookLongPersonLongRelationshipRepositoryV2.findManyTargets(book.getId(), "people", new QuerySpec(Book.class)).get(0);
+//      Library library = book.getLibrary();
+      Library library = bookLongLibraryLongRelationshipRepositoryV2.findOneTarget(book.getId(), "library", new QuerySpec(Book.class));
+      Address personAddress = personLongAddressLongRelationshipRepositoryV2.findOneTarget(firstPerson.getId(), "address", new QuerySpec(Person.class));
+      ret.add(new BookPersonAddressLibrary(firstPerson.getName(), firstPerson.getVorname(), firstPerson.getBeruf(),
+              personAddress.getLocation(), personAddress.getHnummer(), personAddress.getPLZ(),
+              personAddress.getStadt(),
+              book.getTitle(), book.getDescription(), library.getName()));
+    });
+    return ret;
+  }
 
 
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.crnk.core.resource.annotations.JsonApiId;
 import io.crnk.core.resource.annotations.JsonApiRelation;
 import io.crnk.core.resource.annotations.JsonApiResource;
@@ -33,6 +34,12 @@ public class Person implements Serializable {
   fetch = FetchType.LAZY, optional = false)
   @JsonApiRelation(opposite = "person")
   private Address address;
+
+  @ManyToMany(mappedBy = "people", cascade = CascadeType.ALL,
+          fetch = FetchType.LAZY)
+  @JsonApiRelation(opposite = "people")
+  @JsonIgnore
+  private List<Book> books;
 
   public Person() {
       }

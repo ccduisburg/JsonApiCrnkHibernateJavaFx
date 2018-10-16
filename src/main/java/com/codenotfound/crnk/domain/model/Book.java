@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name="book")
@@ -29,6 +30,10 @@ public class Book implements Serializable {
     @ManyToOne
     @JsonApiRelation(opposite = "books")
     private Library library;
+
+    @ManyToMany
+    @JsonApiRelation(opposite = "books")
+    private List<Person> people;
 
     public Book(){}
     {

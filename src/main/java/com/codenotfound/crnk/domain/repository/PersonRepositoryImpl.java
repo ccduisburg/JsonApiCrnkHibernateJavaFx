@@ -5,6 +5,7 @@ import com.codenotfound.crnk.domain.model.Person;
 import io.crnk.core.queryspec.QuerySpec;
 import io.crnk.core.repository.ResourceRepositoryBase;
 import io.crnk.core.resource.list.ResourceList;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -43,6 +44,7 @@ public class PersonRepositoryImpl extends ResourceRepositoryBase<Person, Long> i
     Session session = sessionFactory.openSession();
     List<Person> adress = null;
     adress = session.createQuery("from Person", Person.class).getResultList();
+    adress.forEach(a-> Hibernate.initialize(a.getBooks()));
     session.close();
     return querySpec.apply(adress);
   }
